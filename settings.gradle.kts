@@ -18,3 +18,4 @@ rootProject.name = "SpotyInsights"
 include(":app")
 include(":data")
 include(":domain")
+include(":auth")
