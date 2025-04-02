@@ -1,25 +1,19 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt)
 }
 
 android {
-    namespace = "com.daniel.spotyinsights"
+    namespace = "com.daniel.spotyinsights.data"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.daniel.spotyinsights"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -40,33 +34,13 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-
-    buildFeatures {
-        compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
-    }
-
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
 }
 
 dependencies {
+    implementation(project(":domain"))
+
     // AndroidX Core
     implementation(libs.core.ktx)
-    implementation(libs.lifecycle.runtime.ktx)
-    implementation(libs.lifecycle.viewmodel.compose)
-
-    // Compose
-    implementation(libs.activity.compose)
-    implementation(platform(libs.compose.bom))
-    implementation(libs.bundles.compose)
-    implementation(libs.navigation.compose)
 
     // Dependency Injection
     implementation(libs.hilt.android)
@@ -80,14 +54,8 @@ dependencies {
     implementation(libs.bundles.room)
     kapt(libs.room.compiler)
 
-    // Image Loading
-    implementation(libs.coil)
-
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext)
     androidTestImplementation(libs.espresso.core)
-    androidTestImplementation(platform(libs.compose.bom))
-    androidTestImplementation(libs.compose.ui.test)
-    debugImplementation(libs.compose.ui.tooling)
 }
