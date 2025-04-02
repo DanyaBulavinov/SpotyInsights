@@ -72,6 +72,7 @@ abstract class BaseViewModel<State : UiState, Event : UiEvent, Effect : UiEffect
         viewModelScope.launch { _effect.emit(effectValue) }
     }
 
+
     /**
      * Process a new UI event.
      * Events represent user actions or system events that can trigger state changes.
