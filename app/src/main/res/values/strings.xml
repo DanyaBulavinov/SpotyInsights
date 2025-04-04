@@ -1,3 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SpotyInsights</string>
+    
+    <!-- Navigation -->
+    <string name="top_tracks">Top Tracks</string>
+    <string name="top_artists">Top Artists</string>
+    <string name="recommendations">For You</string>
+
+    <!-- Time Ranges -->
+    <string name="time_range_short">4 Weeks</string>
+    <string name="time_range_medium">6 Months</string>
+    <string name="time_range_long">All Time</string>
+
+    <!-- Track List -->
+    <string name="track_duration">%1$d:%02d</string>
+    <string name="error_loading_tracks">Failed to load tracks</string>
+    <string name="try_again">Try Again</string>
 </resources>
