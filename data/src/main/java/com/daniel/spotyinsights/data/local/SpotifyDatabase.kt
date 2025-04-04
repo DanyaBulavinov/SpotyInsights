@@ -2,6 +2,7 @@ package com.daniel.spotyinsights.data.local
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.daniel.spotyinsights.data.local.dao.ArtistDao
 import com.daniel.spotyinsights.data.local.dao.TrackDao
 import com.daniel.spotyinsights.data.local.entity.*
 
@@ -17,6 +18,7 @@ import com.daniel.spotyinsights.data.local.entity.*
 )
 abstract class SpotifyDatabase : RoomDatabase() {
     abstract fun trackDao(): TrackDao
+    abstract fun artistDao(): ArtistDao
 
     companion object {
         const val DATABASE_NAME = "spotify_database"
