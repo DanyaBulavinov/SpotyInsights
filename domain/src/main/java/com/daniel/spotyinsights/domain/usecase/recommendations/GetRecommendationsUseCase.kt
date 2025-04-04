@@ -1,7 +1,7 @@
 package com.daniel.spotyinsights.domain.usecase.recommendations
 
-import com.daniel.spotyinsights.domain.model.Recommendations
 import com.daniel.spotyinsights.domain.model.RecommendationParameters
+import com.daniel.spotyinsights.domain.model.Recommendations
 import com.daniel.spotyinsights.domain.model.Result
 import com.daniel.spotyinsights.domain.repository.RecommendationsRepository
 import kotlinx.coroutines.flow.Flow
