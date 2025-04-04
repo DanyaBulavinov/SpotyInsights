@@ -4,7 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.daniel.spotyinsights.presentation.tracks.TopTracksScreen
+import com.daniel.spotyinsights.presentation.recommendations.RecommendationsScreen
+import com.daniel.spotyinsights.presentation.top_artists.TopArtistsScreen
+import com.daniel.spotyinsights.presentation.top_tracks.TopTracksScreen
 
 @Composable
 fun SpotifyNavigation(
@@ -18,13 +20,11 @@ fun SpotifyNavigation(
         composable(Screen.TopTracks.route) {
             TopTracksScreen()
         }
-        
         composable(Screen.TopArtists.route) {
-            // TODO: Implement TopArtistsScreen
+            TopArtistsScreen()
         }
-        
         composable(Screen.Recommendations.route) {
-            // TODO: Implement RecommendationsScreen
+            RecommendationsScreen()
         }
     }
 } 
