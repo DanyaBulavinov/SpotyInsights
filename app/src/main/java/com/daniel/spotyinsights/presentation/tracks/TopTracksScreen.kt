@@ -94,7 +94,9 @@ fun TopTracksScreen(
 
                 when {
                     state.isLoading -> {
-                        LazyColumn {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
                             items(10) {
                                 TrackItemSkeleton()
                             }

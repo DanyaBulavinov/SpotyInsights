@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.daniel.spotyinsights.presentation.recommendations.RecommendationsScreen
 import com.daniel.spotyinsights.presentation.top_artists.TopArtistsScreen
-import com.daniel.spotyinsights.presentation.top_tracks.TopTracksScreen
+import com.daniel.spotyinsights.presentation.tracks.TopTracksScreen
 
 @Composable
 fun SpotifyNavigation(

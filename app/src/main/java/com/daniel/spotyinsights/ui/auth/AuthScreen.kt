@@ -35,6 +35,12 @@ fun AuthScreen(
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
 
+    // Check authentication status on launch
+    LaunchedEffect(Unit) {
+        viewModel.setEvent(AuthEvent.CheckAuth)
+    }
+
+    // Handle effects (browser opening, errors)
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
@@ -49,6 +55,7 @@ fun AuthScreen(
         }
     }
 
+    // Handle authentication state changes
     LaunchedEffect(state) {
         if (state is AuthState.Authenticated) {
             onAuthSuccess()

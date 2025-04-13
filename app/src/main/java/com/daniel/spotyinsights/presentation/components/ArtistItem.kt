@@ -21,12 +21,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.daniel.spotyinsights.domain.model.Artist
+import com.daniel.spotyinsights.domain.model.DetailedArtist
 
 @Composable
 fun ArtistItem(
-    artist: Artist,
-    onArtistClick: (Artist) -> Unit,
+    artist: DetailedArtist,
+    onArtistClick: (DetailedArtist) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -38,7 +38,7 @@ fun ArtistItem(
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(artist.imageUrl)
+                .data(artist.images.first())
                 .crossfade(true)
                 .build(),
             contentDescription = null,

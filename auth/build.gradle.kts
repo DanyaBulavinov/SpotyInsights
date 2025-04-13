@@ -61,6 +61,7 @@ dependencies {
     // Network
     implementation(libs.bundles.retrofit)
     implementation(libs.bundles.moshi)
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:${libs.versions.moshi.get()}")
 
     // DataStore
     implementation(libs.datastore.preferences)

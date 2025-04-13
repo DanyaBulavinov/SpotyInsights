@@ -34,7 +34,7 @@ object NetworkModule {
     @Provides
     @Singleton
     @Named("base")
-    fun provideOkHttpClient(
+    fun provideBaseOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
@@ -47,7 +47,7 @@ object NetworkModule {
     @Singleton
     @Named("spotify")
     fun provideSpotifyRetrofit(
-        okHttpClient: OkHttpClient,
+        @Named("base") okHttpClient: OkHttpClient,
         moshi: Moshi
     ): Retrofit = Retrofit.Builder()
         .baseUrl(SpotifyApiConfig.BASE_URL)

@@ -36,7 +36,7 @@ fun RecommendationItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
-            model = track.imageUrl,
+            model = track.album.imageUrl,
             contentDescription = "Album art for ${track.name}",
             contentScale = ContentScale.Crop,
             modifier = Modifier
