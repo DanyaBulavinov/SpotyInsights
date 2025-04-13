@@ -38,4 +38,4 @@ sealed class Screen(
             Recommendations
         )
     }
-} 
+}
