@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AssistChip
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,10 +24,10 @@ fun GenreSelector(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         availableGenres.forEach { genre ->
-            AssistChip(
+            FilterChip(
+                selected = selectedGenres.contains(genre),
                 onClick = { onGenreSelected(genre) },
                 label = { Text(text = genre) },
-                selected = selectedGenres.contains(genre),
                 modifier = Modifier.padding(end = 4.dp)
             )
         }
