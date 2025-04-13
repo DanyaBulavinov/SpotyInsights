@@ -1,8 +1,9 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
+//    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -44,7 +45,8 @@ dependencies {
 
     // Dependency Injection
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+//    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     // Network
     implementation(libs.bundles.retrofit)
@@ -52,7 +54,8 @@ dependencies {
 
     // Database
     implementation(libs.bundles.room)
-    kapt(libs.room.compiler)
+//    kapt(libs.room.compiler)
+    ksp(libs.room.compiler)
 
     // Testing
     testImplementation(libs.junit)

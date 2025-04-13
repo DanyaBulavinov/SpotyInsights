@@ -58,12 +58,19 @@ class AuthViewModel @Inject constructor(
             when (val result = authRepository.getAccessToken(code)) {
                 is Result.Success -> {
                     val response = result.data
-                    authDataStore.saveTokens(response.accessToken, response.refreshToken)
+                    authDataStore.saveTokens(
+                        accessToken = response.accessToken,
+                        refreshToken = response.refreshToken,
+                        expiresIn = response.expiresIn
+                    )
                     setState { AuthState.Authenticated(response.accessToken) }
                 }
                 is Result.Error -> {
                     setState { AuthState.Error("Authentication failed") }
                     setEffect { AuthEffect.ShowError("Failed to get access token: ${result.exception.message}") }
+                }
+                is Result.Loading -> {
+                    setState { AuthState.Loading }
                 }
             }
         }
@@ -82,12 +89,19 @@ class AuthViewModel @Inject constructor(
                 when (val result = authRepository.refreshAccessToken(refreshToken)) {
                     is Result.Success -> {
                         val response = result.data
-                        authDataStore.saveTokens(response.accessToken, response.refreshToken ?: refreshToken)
+                        authDataStore.saveTokens(
+                            accessToken = response.accessToken,
+                            refreshToken = response.refreshToken ?: refreshToken,
+                            expiresIn = response.expiresIn
+                        )
                         setState { AuthState.Authenticated(response.accessToken) }
                     }
                     is Result.Error -> {
                         authDataStore.clearTokens()
                         setState { AuthState.Initial }
+                    }
+                    is Result.Loading -> {
+                        setState { AuthState.Loading }
                     }
                 }
             } else {

@@ -16,9 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.daniel.spotyinsights.auth.AuthStateHolder
 import com.daniel.spotyinsights.auth.AuthenticationState
+import com.daniel.spotyinsights.presentation.navigation.Screen
 import com.daniel.spotyinsights.presentation.navigation.SpotifyBottomNavigation
 import com.daniel.spotyinsights.presentation.navigation.SpotifyNavigation
-import com.daniel.spotyinsights.ui.auth.AuthEvent
 import com.daniel.spotyinsights.ui.auth.AuthScreen
 import com.daniel.spotyinsights.ui.theme.SpotyInsightsTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val authState by authViewModel.authState.collectAsState()
+            val authState by authViewModel.authState.collectAsState(initial = AuthenticationState.UNAUTHENTICATED)
 
             SpotyInsightsTheme {
                 Surface(
@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
                         AuthenticationState.AUTHENTICATED -> {
                             SpotifyApp(
                                 onLogout = {
-                                    authViewModel.setEvent(AuthEvent.Logout)
+                                    authViewModel.logout()
                                 }
                             )
                         }
@@ -68,13 +68,16 @@ fun SpotifyApp(
 
     Scaffold(
         bottomBar = {
-            SpotifyBottomNavigation(navController)
+            SpotifyBottomNavigation(navController = navController)
         }
     ) { paddingValues ->
         Box(
             modifier = Modifier.padding(paddingValues)
         ) {
-            SpotifyNavigation(navController)
+            SpotifyNavigation(
+                navController = navController,
+                startDestination = Screen.TopTracks.route
+            )
         }
     }
 }

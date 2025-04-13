@@ -1,59 +1,53 @@
 package com.daniel.spotyinsights.presentation.navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.daniel.spotyinsights.R
 
 @Composable
 fun SpotifyBottomNavigation(
-    navController: NavController,
-    modifier: Modifier = Modifier
+    navController: NavController
 ) {
     val items = listOf(
-        NavigationItem(
-            route = Screen.TopTracks.route,
-            title = "Top Tracks",
-            icon = Icons.Default.MusicNote
-        ),
-        NavigationItem(
-            route = Screen.TopArtists.route,
-            title = "Top Artists",
-            icon = Icons.Default.AccountCircle
-        ),
-        NavigationItem(
-            route = Screen.Recommendations.route,
-            title = "For You",
-            icon = Icons.Default.Favorite
-        )
+        Screen.TopTracks,
+        Screen.TopArtists,
+        Screen.Recommendations
     )
 
-    val backStackEntry = navController.currentBackStackEntryAsState()
-    val currentRoute = backStackEntry.value?.destination?.route
+    NavigationBar {
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
 
-    NavigationBar(
-        modifier = modifier
-    ) {
-        items.forEach { item ->
+        items.forEach { screen ->
             NavigationBarItem(
-                icon = { Icon(item.icon, contentDescription = item.title) },
-                label = { Text(text = item.title) },
-                selected = currentRoute == item.route,
+                icon = {
+                    Icon(
+                        imageVector = screen.icon,
+                        contentDescription = stringResource(id = screen.labelResId)
+                    )
+                },
+                label = { Text(stringResource(id = screen.labelResId)) },
+                selected = currentRoute == screen.route,
                 onClick = {
-                    if (currentRoute != item.route) {
-                        navController.navigate(item.route) {
+                    if (currentRoute != screen.route) {
+                        navController.navigate(screen.route) {
+                            // Pop up to the start destination of the graph to
+                            // avoid building up a large stack of destinations
+                            // on the back stack as users select items
                             popUpTo(navController.graph.startDestinationId) {
                                 saveState = true
                             }
+                            // Avoid multiple copies of the same destination when
+                            // reselecting the same item
                             launchSingleTop = true
+                            // Restore state when reselecting a previously selected item
                             restoreState = true
                         }
                     }
@@ -61,4 +55,4 @@ fun SpotifyBottomNavigation(
             )
         }
     }
-} 
+}

@@ -18,6 +18,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -33,7 +34,10 @@ object DataModule {
             context,
             SpotifyDatabase::class.java,
             SpotifyDatabase.DATABASE_NAME
-        ).build()
+        )
+        .addMigrations(SpotifyDatabase.MIGRATION_2_3)
+        .fallbackToDestructiveMigration()
+        .build()
     }
 
     @Provides
@@ -50,7 +54,7 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideSpotifyApiService(retrofit: Retrofit): SpotifyApiService {
+    fun provideSpotifyApiService(@Named("spotify") retrofit: Retrofit): SpotifyApiService {
         return retrofit.create(SpotifyApiService::class.java)
     }
 

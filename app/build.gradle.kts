@@ -1,8 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
+//    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -11,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.daniel.spotyinsights"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -54,23 +55,45 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    configurations.all {
+        resolutionStrategy {
+            eachDependency {
+                if (requested.group == "org.jetbrains.kotlin") {
+                    useVersion(libs.versions.kotlin.get())
+                }
+            }
+        }
+    }
+//    kapt {
+//        correctErrorTypes = true
+//        generateStubs = true
+//    }
 }
 
 dependencies {
+    // Modules
+    implementation(project(":domain"))
+    implementation(project(":data"))
+    implementation(project(":auth"))
+
     // AndroidX Core
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.lifecycle.viewmodel.compose)
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
 
     // Compose
     implementation(libs.activity.compose)
     implementation(platform(libs.compose.bom))
     implementation(libs.bundles.compose)
     implementation(libs.navigation.compose)
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
     // Dependency Injection
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+//    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     // Network
     implementation(libs.bundles.retrofit)
@@ -78,7 +101,8 @@ dependencies {
 
     // Database
     implementation(libs.bundles.room)
-    kapt(libs.room.compiler)
+//    kapt(libs.room.compiler)
+    ksp(libs.room.compiler)
 
     // Image Loading
     implementation(libs.coil)

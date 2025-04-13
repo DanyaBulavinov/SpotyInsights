@@ -1,8 +1,9 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
+//    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -14,10 +15,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
 
-        val properties = org.gradle.internal.SystemProperties.getInstance().createPropertySource("local", project.file("../local.properties")).get()
+        val properties = com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(project.rootDir)
         
-        buildConfigField("String", "SPOTIFY_CLIENT_ID", "\"${properties.getProperty("SPOTIFY_CLIENT_ID")}\"")
-        buildConfigField("String", "SPOTIFY_CLIENT_SECRET", "\"${properties.getProperty("SPOTIFY_CLIENT_SECRET")}\"")
+        buildConfigField("String", "SPOTIFY_CLIENT_ID", "\"${properties.getProperty("SPOTIFY_CLIENT_ID", "")}\"")
+        buildConfigField("String", "SPOTIFY_CLIENT_SECRET", "\"${properties.getProperty("SPOTIFY_CLIENT_SECRET", "")}\"")
         buildConfigField("String", "SPOTIFY_REDIRECT_URI", "\"spotyinsights://callback\"")
     }
 
@@ -47,13 +48,15 @@ android {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(project(":data"))
 
     // AndroidX Core
     implementation(libs.core.ktx)
 
     // Dependency Injection
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+//    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     // Network
     implementation(libs.bundles.retrofit)

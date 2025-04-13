@@ -34,7 +34,7 @@ data class SpotifyTrack(
     @Json(name = "album")
     val album: SpotifyAlbum,
     @Json(name = "artists")
-    val artists: List<SpotifyArtist>
+    val artists: List<SpotifyTrackArtist>
 )
 
 @JsonClass(generateAdapter = true)
@@ -52,7 +52,7 @@ data class SpotifyAlbum(
 )
 
 @JsonClass(generateAdapter = true)
-data class SpotifyArtist(
+data class SpotifyTrackArtist(
     @Json(name = "id")
     val id: String,
     @Json(name = "name")

@@ -1,17 +1,20 @@
 package com.daniel.spotyinsights.data.repository
 
 import com.daniel.spotyinsights.data.local.dao.TrackDao
-import com.daniel.spotyinsights.data.local.entity.*
+import com.daniel.spotyinsights.data.local.dao.TrackWithRelations
+import com.daniel.spotyinsights.data.local.entity.TrackArtistCrossRef
+import com.daniel.spotyinsights.data.local.entity.TrackEntity
+import com.daniel.spotyinsights.data.local.entity.AlbumEntity
+import com.daniel.spotyinsights.data.local.entity.TrackArtistEntity
 import com.daniel.spotyinsights.data.network.api.SpotifyApiService
-import com.daniel.spotyinsights.data.network.model.track.SpotifyTrack
 import com.daniel.spotyinsights.domain.model.*
 import com.daniel.spotyinsights.domain.repository.TimeRange
 import com.daniel.spotyinsights.domain.repository.TopTracksRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
+import java.util.concurrent.TimeUnit
 
 @Singleton
 class TopTracksRepositoryImpl @Inject constructor(
@@ -36,13 +39,13 @@ class TopTracksRepositoryImpl @Inject constructor(
 
             val currentTimeMs = System.currentTimeMillis()
             val tracks = mutableListOf<TrackEntity>()
-            val artists = mutableListOf<ArtistEntity>()
+            val artists = mutableListOf<TrackArtistEntity>()
             val albums = mutableListOf<AlbumEntity>()
             val trackArtistRefs = mutableListOf<TrackArtistCrossRef>()
 
             response.items.forEach { spotifyTrack ->
                 tracks.add(spotifyTrack.toTrackEntity(currentTimeMs))
-                artists.addAll(spotifyTrack.artists.map { it.toArtistEntity() })
+                artists.addAll(spotifyTrack.artists.map { it.toTrackArtistEntity() })
                 albums.add(spotifyTrack.album.toAlbumEntity())
                 trackArtistRefs.addAll(
                     spotifyTrack.artists.map { artist ->
@@ -77,7 +80,7 @@ class TopTracksRepositoryImpl @Inject constructor(
         id = track.id,
         name = track.name,
         artists = artists.map { artist ->
-            Artist(
+            TrackArtist(
                 id = artist.id,
                 name = artist.name,
                 spotifyUrl = artist.spotifyUrl
@@ -97,33 +100,7 @@ class TopTracksRepositoryImpl @Inject constructor(
         explicit = track.explicit
     )
 
-    private fun SpotifyTrack.toTrackEntity(fetchTimeMs: Long) = TrackEntity(
-        id = id,
-        name = name,
-        durationMs = durationMs,
-        popularity = popularity,
-        previewUrl = previewUrl,
-        spotifyUrl = externalUrls["spotify"] ?: "",
-        explicit = explicit,
-        albumId = album.id,
-        fetchTimeMs = fetchTimeMs
-    )
-
-    private fun SpotifyArtist.toArtistEntity() = ArtistEntity(
-        id = id,
-        name = name,
-        spotifyUrl = externalUrls["spotify"] ?: ""
-    )
-
-    private fun SpotifyAlbum.toAlbumEntity() = AlbumEntity(
-        id = id,
-        name = name,
-        releaseDate = releaseDate,
-        imageUrl = images.firstOrNull()?.url ?: "",
-        spotifyUrl = externalUrls["spotify"] ?: ""
-    )
-
     companion object {
         private val CACHE_DURATION_MS = TimeUnit.HOURS.toMillis(24) // Cache for 24 hours
     }
-} 
+}

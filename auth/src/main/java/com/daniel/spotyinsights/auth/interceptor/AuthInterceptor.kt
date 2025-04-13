@@ -48,6 +48,9 @@ class AuthInterceptor @Inject constructor(
                         runBlocking { authDataStore.clearTokens() }
                         // Let the request proceed without token, it will fail with 401
                     }
+                    is Result.Loading -> {
+                        // Do nothing while loading, proceed with existing token
+                    }
                 }
             }
         }
@@ -78,6 +81,9 @@ class AuthInterceptor @Inject constructor(
                     }
                     is Result.Error -> {
                         runBlocking { authDataStore.clearTokens() }
+                    }
+                    is Result.Loading -> {
+                        // Do nothing while loading, proceed with existing token
                     }
                 }
             }

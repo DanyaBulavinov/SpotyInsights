@@ -3,7 +3,7 @@ package com.daniel.spotyinsights.domain.model
 data class Track(
     val id: String,
     val name: String,
-    val artists: List<Artist>,
+    val artists: List<TrackArtist>,
     val album: Album,
     val durationMs: Long,
     val popularity: Int,
@@ -12,7 +12,7 @@ data class Track(
     val explicit: Boolean
 )
 
-data class Artist(
+data class TrackArtist(
     val id: String,
     val name: String,
     val spotifyUrl: String

@@ -15,6 +15,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Qualifier
 import javax.inject.Singleton
+import javax.inject.Named
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
@@ -33,21 +34,11 @@ abstract class AuthModule {
     companion object {
         @Provides
         @Singleton
-        fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
-            return HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            }
-        }
-
-        @Provides
-        @Singleton
         @AuthOkHttpClient
         fun provideAuthOkHttpClient(
-            loggingInterceptor: HttpLoggingInterceptor
+            @Named("base") baseClient: OkHttpClient
         ): OkHttpClient {
-            return OkHttpClient.Builder()
-                .addInterceptor(loggingInterceptor)
-                .build()
+            return baseClient
         }
 
         @Provides
@@ -66,7 +57,7 @@ abstract class AuthModule {
         @Provides
         @Singleton
         fun provideAuthenticatedOkHttpClient(
-            @AuthOkHttpClient baseClient: OkHttpClient,
+            @Named("base") baseClient: OkHttpClient,
             authInterceptor: AuthInterceptor
         ): OkHttpClient {
             return baseClient.newBuilder()
