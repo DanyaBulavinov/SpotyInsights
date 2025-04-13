@@ -33,6 +33,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    @Named("base")
     fun provideOkHttpClient(
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient = OkHttpClient.Builder()
@@ -58,7 +59,7 @@ object NetworkModule {
     @Singleton
     @Named("spotify-auth")
     fun provideSpotifyAuthRetrofit(
-        okHttpClient: OkHttpClient,
+        @Named("base") okHttpClient: OkHttpClient,
         moshi: Moshi
     ): Retrofit = Retrofit.Builder()
         .baseUrl(SpotifyApiConfig.AUTH_URL)

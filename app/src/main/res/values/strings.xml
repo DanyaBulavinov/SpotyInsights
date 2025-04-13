@@ -3,9 +3,9 @@
     <string name="app_name">SpotyInsights</string>
     
     <!-- Navigation -->
-    <string name="top_tracks">Top Tracks</string>
-    <string name="top_artists">Top Artists</string>
-    <string name="recommendations">For You</string>
+    <string name="nav_top_tracks">Top Tracks</string>
+    <string name="nav_top_artists">Top Artists</string>
+    <string name="nav_recommendations">For You</string>
 
     <!-- Time Ranges -->
     <string name="time_range_short">4 Weeks</string>
@@ -13,7 +13,7 @@
     <string name="time_range_long">All Time</string>
 
     <!-- Track List -->
-    <string name="track_duration">%1$d:%02d</string>
+    <string name="track_duration" formatted="false">%1$d:%02d</string>
     <string name="error_loading_tracks">Failed to load tracks</string>
     <string name="try_again">Try Again</string>
 </resources>

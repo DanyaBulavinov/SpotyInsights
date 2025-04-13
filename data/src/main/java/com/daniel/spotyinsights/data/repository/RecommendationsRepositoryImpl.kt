@@ -1,15 +1,19 @@
 package com.daniel.spotyinsights.data.repository
 
 import com.daniel.spotyinsights.data.local.dao.TrackDao
+import com.daniel.spotyinsights.data.local.dao.TrackWithRelations
 import com.daniel.spotyinsights.data.local.entity.TrackArtistCrossRef
+import com.daniel.spotyinsights.data.local.entity.TrackEntity
+import com.daniel.spotyinsights.data.local.entity.AlbumEntity
+import com.daniel.spotyinsights.data.local.entity.TrackArtistEntity
 import com.daniel.spotyinsights.data.network.api.SpotifyApiService
-import com.daniel.spotyinsights.data.network.model.recommendations.SpotifyRecommendationSeed
 import com.daniel.spotyinsights.domain.model.*
 import com.daniel.spotyinsights.domain.repository.RecommendationsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.collections.map
 
 @Singleton
 class RecommendationsRepositoryImpl @Inject constructor(
@@ -55,13 +59,13 @@ class RecommendationsRepositoryImpl @Inject constructor(
 
             val currentTimeMs = System.currentTimeMillis()
             val tracks = mutableListOf<TrackEntity>()
-            val artists = mutableListOf<ArtistEntity>()
+            val artists = mutableListOf<TrackArtistEntity>()
             val albums = mutableListOf<AlbumEntity>()
             val trackArtistRefs = mutableListOf<TrackArtistCrossRef>()
 
             response.tracks.forEach { spotifyTrack ->
                 tracks.add(spotifyTrack.toTrackEntity(currentTimeMs))
-                artists.addAll(spotifyTrack.artists.map { it.toArtistEntity() })
+                artists.addAll(spotifyTrack.artists.map { it.toTrackArtistEntity() })
                 albums.add(spotifyTrack.album.toAlbumEntity())
                 trackArtistRefs.addAll(
                     spotifyTrack.artists.map { artist ->
@@ -83,14 +87,27 @@ class RecommendationsRepositoryImpl @Inject constructor(
         }
     }
 
-    private fun SpotifyRecommendationSeed.toDomainModel() = RecommendationSeed(
-        id = id,
-        type = when (type.lowercase()) {
-            "artist" -> SeedType.ARTIST
-            "track" -> SeedType.TRACK
-            "genre" -> SeedType.GENRE
-            else -> throw IllegalArgumentException("Unknown seed type: $type")
+    private fun TrackWithRelations.toDomainModel() = Track(
+        id = track.id,
+        name = track.name,
+        artists = artists.map { artist ->
+            TrackArtist(
+                id = artist.id,
+                name = artist.name,
+                spotifyUrl = artist.spotifyUrl
+            )
         },
-        href = href
+        album = Album(
+            id = album.id,
+            name = album.name,
+            releaseDate = album.releaseDate,
+            imageUrl = album.imageUrl,
+            spotifyUrl = album.spotifyUrl
+        ),
+        durationMs = track.durationMs,
+        popularity = track.popularity,
+        previewUrl = track.previewUrl,
+        spotifyUrl = track.spotifyUrl,
+        explicit = track.explicit
     )
-} 
+}

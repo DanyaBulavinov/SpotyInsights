@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -61,9 +62,10 @@ class AuthDataStore @Inject constructor(
     }
 
     suspend fun isTokenExpired(): Boolean {
-        val expirationTime = tokenExpirationTime.map { it ?: 0L }.collect { it }
+        val expirationTime = tokenExpirationTime.first() ?: 0L
         // Consider token expired 5 minutes before actual expiration to have a safety margin
         val safetyMarginMs = 5 * 60 * 1000L
-        return System.currentTimeMillis() + safetyMarginMs >= expirationTime
+        val currentTimeWithMargin = System.currentTimeMillis() + safetyMarginMs
+        return currentTimeWithMargin >= expirationTime
     }
 } 

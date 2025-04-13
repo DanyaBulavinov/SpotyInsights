@@ -8,8 +8,8 @@ import com.daniel.spotyinsights.domain.usecase.artist.RefreshTopArtistsUseCase
 import com.daniel.spotyinsights.domain.usecase.recommendations.GetGenreSeedsUseCase
 import com.daniel.spotyinsights.domain.usecase.recommendations.GetRecommendationsUseCase
 import com.daniel.spotyinsights.domain.usecase.recommendations.RefreshRecommendationsUseCase
-import com.daniel.spotyinsights.domain.usecase.track.GetTopTracksUseCase
-import com.daniel.spotyinsights.domain.usecase.track.RefreshTopTracksUseCase
+import com.daniel.spotyinsights.domain.usecase.tracks.GetTopTracksUseCase
+import com.daniel.spotyinsights.domain.usecase.tracks.RefreshTopTracksUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

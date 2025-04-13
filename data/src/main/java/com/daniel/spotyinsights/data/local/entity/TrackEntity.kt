@@ -19,24 +19,6 @@ data class TrackEntity(
     val fetchTimeMs: Long // To track when the data was fetched
 )
 
-@Entity(tableName = "artists")
-data class ArtistEntity(
-    @PrimaryKey
-    val id: String,
-    val name: String,
-    val spotifyUrl: String
-)
-
-@Entity(tableName = "albums")
-data class AlbumEntity(
-    @PrimaryKey
-    val id: String,
-    val name: String,
-    val releaseDate: String,
-    val imageUrl: String,
-    val spotifyUrl: String
-)
-
 @Entity(
     tableName = "track_artist_cross_ref",
     primaryKeys = ["trackId", "artistId"],
@@ -48,7 +30,7 @@ data class AlbumEntity(
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
-            entity = ArtistEntity::class,
+            entity = TrackArtistEntity::class,
             parentColumns = ["id"],
             childColumns = ["artistId"],
             onDelete = ForeignKey.CASCADE

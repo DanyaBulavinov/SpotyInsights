@@ -18,7 +18,7 @@ interface TrackDao {
     suspend fun insertTracks(tracks: List<TrackEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertArtists(artists: List<ArtistEntity>)
+    suspend fun insertArtists(artists: List<TrackArtistEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAlbums(albums: List<AlbumEntity>)
@@ -29,7 +29,7 @@ interface TrackDao {
     @Transaction
     suspend fun insertTracksWithRelations(
         tracks: List<TrackEntity>,
-        artists: List<ArtistEntity>,
+        artists: List<TrackArtistEntity>,
         albums: List<AlbumEntity>,
         trackArtistCrossRefs: List<TrackArtistCrossRef>
     ) {
@@ -59,5 +59,5 @@ data class TrackWithRelations(
             entityColumn = "artistId"
         )
     )
-    val artists: List<ArtistEntity>
+    val artists: List<TrackArtistEntity>
 ) 

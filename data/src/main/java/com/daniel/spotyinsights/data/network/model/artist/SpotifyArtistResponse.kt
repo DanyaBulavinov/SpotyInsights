@@ -26,13 +26,13 @@ data class SpotifyArtist(
     @Json(name = "genres")
     val genres: List<String>,
     @Json(name = "images")
-    val images: List<SpotifyImage>,
+    val images: List<SpotifyImageResponse>,
     @Json(name = "popularity")
     val popularity: Int
 )
 
 @JsonClass(generateAdapter = true)
-data class SpotifyImage(
+data class SpotifyImageResponse(
     @Json(name = "url")
     val url: String,
     @Json(name = "height")
