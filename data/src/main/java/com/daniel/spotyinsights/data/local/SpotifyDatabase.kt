@@ -20,7 +20,7 @@ import com.daniel.spotyinsights.data.local.entity.*
         ArtistGenreCrossRef::class,
         ArtistImageCrossRef::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = true
 )
 abstract class SpotifyDatabase : RoomDatabase() {
@@ -29,6 +29,7 @@ abstract class SpotifyDatabase : RoomDatabase() {
 
     companion object {
         const val DATABASE_NAME = "spotify_database"
+        const val DATABASE_VERSION = 4
 
         val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
@@ -59,6 +60,17 @@ abstract class SpotifyDatabase : RoomDatabase() {
 
                 // Create index on artistId
                 database.execSQL("CREATE INDEX IF NOT EXISTS index_track_artist_refs_artistId ON track_artist_refs(artistId)")
+            }
+        }
+
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    ALTER TABLE detailed_artists
+                    ADD COLUMN timeRange TEXT NOT NULL DEFAULT 'medium_term'
+                    """
+                )
             }
         }
     }

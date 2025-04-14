@@ -1,22 +1,26 @@
 package com.daniel.spotyinsights.data.repository
 
+import android.util.Log
 import com.daniel.spotyinsights.data.local.dao.TrackDao
 import com.daniel.spotyinsights.data.local.dao.TrackWithRelations
-import com.daniel.spotyinsights.data.local.entity.TrackArtistCrossRef
-import com.daniel.spotyinsights.data.local.entity.TrackEntity
 import com.daniel.spotyinsights.data.local.entity.AlbumEntity
+import com.daniel.spotyinsights.data.local.entity.TrackArtistCrossRef
 import com.daniel.spotyinsights.data.local.entity.TrackArtistEntity
+import com.daniel.spotyinsights.data.local.entity.TrackEntity
 import com.daniel.spotyinsights.data.network.api.SpotifyApiService
-import com.daniel.spotyinsights.domain.model.*
+import com.daniel.spotyinsights.domain.model.Album
+import com.daniel.spotyinsights.domain.model.Result
+import com.daniel.spotyinsights.domain.model.Track
+import com.daniel.spotyinsights.domain.model.TrackArtist
 import com.daniel.spotyinsights.domain.repository.TimeRange
 import com.daniel.spotyinsights.domain.repository.TopTracksRepository
 import com.daniel.spotyinsights.domain.util.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
-import java.util.concurrent.TimeUnit
 
 @Singleton
 class TopTracksRepositoryImpl @Inject constructor(
@@ -40,11 +44,20 @@ class TopTracksRepositoryImpl @Inject constructor(
 
     override suspend fun refreshTopTracks(timeRange: TimeRange): Result<Unit> {
         return try {
-            Logger.i("Refreshing top tracks for time range: $timeRange")
+            Log.d("TopTracksRepository", "Refreshing top tracks for time range: $timeRange")
             val response = spotifyApiService.getTopTracks(
                 timeRange = timeRange.toApiValue(),
                 limit = 50
             )
+            Log.d(
+                "TopTracksRepository",
+                "API response received. Items count: ${response.items.size}"
+            )
+
+            if (response.items.isEmpty()) {
+                Log.w("TopTracksRepository", "API returned empty tracks list")
+                return Result.Success(Unit)
+            }
 
             val currentTimeMs = System.currentTimeMillis()
             val tracks = mutableListOf<TrackEntity>()
@@ -63,21 +76,25 @@ class TopTracksRepositoryImpl @Inject constructor(
                 )
             }
 
-            Logger.i("Inserting ${tracks.size} tracks into database")
+            Log.d(
+                "TopTracksRepository",
+                "Inserting ${tracks.size} tracks with relations into database"
+            )
             trackDao.insertTracksWithRelations(
                 tracks = tracks,
                 artists = artists.distinctBy { it.id },
                 albums = albums.distinctBy { it.id },
                 trackArtistCrossRefs = trackArtistRefs
             )
+            Log.d("TopTracksRepository", "Tracks inserted successfully")
 
             // Clean up old data
             trackDao.deleteOldTracks(currentTimeMs - CACHE_DURATION_MS)
-            Logger.i("Successfully refreshed top tracks")
+            Log.d("TopTracksRepository", "Old tracks cleaned up")
 
             Result.Success(Unit)
         } catch (e: Exception) {
-            Logger.e("Failed to refresh top tracks", e)
+            Log.e("TopTracksRepository", "Error refreshing top tracks", e)
             Result.Error(e)
         }
     }
