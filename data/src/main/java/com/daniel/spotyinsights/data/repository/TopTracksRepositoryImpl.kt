@@ -10,8 +10,10 @@ import com.daniel.spotyinsights.data.network.api.SpotifyApiService
 import com.daniel.spotyinsights.domain.model.*
 import com.daniel.spotyinsights.domain.repository.TimeRange
 import com.daniel.spotyinsights.domain.repository.TopTracksRepository
+import com.daniel.spotyinsights.domain.util.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 import javax.inject.Singleton
 import java.util.concurrent.TimeUnit
@@ -25,6 +27,12 @@ class TopTracksRepositoryImpl @Inject constructor(
     override fun getTopTracks(timeRange: TimeRange): Flow<Result<List<Track>>> {
         val minFetchTimeMs = System.currentTimeMillis() - CACHE_DURATION_MS
         return trackDao.getTopTracks(minFetchTimeMs)
+            .onEach { tracks ->
+                if (tracks.isEmpty()) {
+                    Logger.i("No tracks found in database, triggering refresh")
+                    refreshTopTracks(timeRange)
+                }
+            }
             .map { tracks ->
                 Result.Success(tracks.map { it.toDomainModel() })
             }
@@ -32,6 +40,7 @@ class TopTracksRepositoryImpl @Inject constructor(
 
     override suspend fun refreshTopTracks(timeRange: TimeRange): Result<Unit> {
         return try {
+            Logger.i("Refreshing top tracks for time range: $timeRange")
             val response = spotifyApiService.getTopTracks(
                 timeRange = timeRange.toApiValue(),
                 limit = 50
@@ -54,6 +63,7 @@ class TopTracksRepositoryImpl @Inject constructor(
                 )
             }
 
+            Logger.i("Inserting ${tracks.size} tracks into database")
             trackDao.insertTracksWithRelations(
                 tracks = tracks,
                 artists = artists.distinctBy { it.id },
@@ -63,9 +73,11 @@ class TopTracksRepositoryImpl @Inject constructor(
 
             // Clean up old data
             trackDao.deleteOldTracks(currentTimeMs - CACHE_DURATION_MS)
+            Logger.i("Successfully refreshed top tracks")
 
             Result.Success(Unit)
         } catch (e: Exception) {
+            Logger.e("Failed to refresh top tracks", e)
             Result.Error(e)
         }
     }

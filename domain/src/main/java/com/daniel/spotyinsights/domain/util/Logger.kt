@@ -3,7 +3,7 @@ package com.daniel.spotyinsights.domain.util
 import android.util.Log
 
 object Logger {
-    private const val TAG = "SpotyInsights"
+    private const val TAG = "SMTH"
 
     fun d(message: String, tag: String = TAG) {
         // Since we're in domain module, we can't access BuildConfig

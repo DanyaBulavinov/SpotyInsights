@@ -8,21 +8,21 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface SpotifyApiService {
-    @GET("v1/me/top/tracks")
+    @GET("me/top/tracks")
     suspend fun getTopTracks(
         @Query("time_range") timeRange: String, // short_term (4 weeks) | medium_term (6 months) | long_term (years)
         @Query("limit") limit: Int = 50,
         @Query("offset") offset: Int = 0
     ): SpotifyTrackResponse
 
-    @GET("v1/me/top/artists")
+    @GET("me/top/artists")
     suspend fun getTopArtists(
         @Query("time_range") timeRange: String,
         @Query("limit") limit: Int = 50,
         @Query("offset") offset: Int = 0
     ): SpotifyArtistResponse
 
-    @GET("v1/recommendations")
+    @GET("recommendations")
     suspend fun getRecommendations(
         @Query("seed_artists") seedArtists: String? = null,
         @Query("seed_tracks") seedTracks: String? = null,
@@ -33,6 +33,6 @@ interface SpotifyApiService {
         @Query("target_popularity") targetPopularity: Int? = null
     ): SpotifyRecommendationsResponse
 
-    @GET("v1/recommendations/available-genre-seeds")
+    @GET("recommendations/available-genre-seeds")
     suspend fun getAvailableGenreSeeds(): SpotifyAvailableGenreSeedsResponse
 } 

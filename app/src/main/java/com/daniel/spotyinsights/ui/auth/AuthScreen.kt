@@ -48,6 +48,7 @@ fun AuthScreen(
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(effect.url))
                     context.startActivity(intent)
                 }
+
                 is AuthEffect.ShowError -> {
                     snackbarHostState.showSnackbar(effect.message)
                 }
@@ -83,12 +84,15 @@ fun AuthScreen(
                         Text("Login with Spotify")
                     }
                 }
+
                 AuthState.Loading -> {
                     CircularProgressIndicator()
                 }
+
                 is AuthState.Authenticated -> {
                     Text("Authentication successful!")
                 }
+
                 is AuthState.Error -> {
                     Text(
                         text = (state as AuthState.Error).message,

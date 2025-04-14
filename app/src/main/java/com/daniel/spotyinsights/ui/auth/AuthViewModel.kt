@@ -55,7 +55,7 @@ class AuthViewModel @Inject constructor(
             authDataStore.clearTokens()
             Logger.auth("Cleared existing tokens")
             setState { AuthState.Initial }
-            
+
             val authUrl = authRepository.getAuthorizationUrl()
             Logger.auth("Generated auth URL: $authUrl")
             setEffect { AuthEffect.OpenBrowser(authUrl) }
@@ -66,7 +66,7 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             Logger.auth("Handling auth response with code: ${code.take(5)}...")
             setState { AuthState.Loading }
-            
+
             when (val result = authRepository.getAccessToken(code)) {
                 is Result.Success -> {
                     val response = result.data
@@ -79,12 +79,14 @@ class AuthViewModel @Inject constructor(
                     Logger.auth("Saved tokens to storage, expires in: ${response.expiresIn} seconds")
                     setState { AuthState.Authenticated(response.accessToken) }
                 }
+
                 is Result.Error -> {
                     val errorMessage = "Failed to get access token: ${result.exception.message}"
                     Logger.auth(errorMessage, result.exception)
                     setState { AuthState.Error("Authentication failed") }
                     setEffect { AuthEffect.ShowError(errorMessage) }
                 }
+
                 is Result.Loading -> {
                     setState { AuthState.Loading }
                 }
@@ -96,7 +98,7 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             Logger.auth("Checking existing authentication")
             setState { AuthState.Loading }
-            
+
             val accessToken = authDataStore.accessToken.first()
             val refreshToken = authDataStore.refreshToken.first()
 
@@ -105,6 +107,7 @@ class AuthViewModel @Inject constructor(
                     Logger.auth("Found valid access token")
                     setState { AuthState.Authenticated(accessToken) }
                 }
+
                 refreshToken != null -> {
                     Logger.auth("Access token expired, attempting to refresh with refresh token")
                     when (val result = authRepository.refreshAccessToken(refreshToken)) {
@@ -118,16 +121,19 @@ class AuthViewModel @Inject constructor(
                             )
                             setState { AuthState.Authenticated(response.accessToken) }
                         }
+
                         is Result.Error -> {
                             Logger.auth("Failed to refresh token", result.exception)
                             authDataStore.clearTokens()
                             setState { AuthState.Initial }
                         }
+
                         is Result.Loading -> {
                             setState { AuthState.Loading }
                         }
                     }
                 }
+
                 else -> {
                     Logger.auth("No existing tokens found")
                     setState { AuthState.Initial }

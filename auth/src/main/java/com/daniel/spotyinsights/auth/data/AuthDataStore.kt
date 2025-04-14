@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.daniel.spotyinsights.domain.repository.TokenRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -19,14 +20,15 @@ private val Context.authDataStore: DataStore<Preferences> by preferencesDataStor
 @Singleton
 class AuthDataStore @Inject constructor(
     @ApplicationContext private val context: Context
-) {
+) : TokenRepository {
+
     private object PreferencesKeys {
         val ACCESS_TOKEN = stringPreferencesKey("access_token")
         val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
-        val TOKEN_EXPIRATION_TIME = longPreferencesKey("token_expiration_time")
+        val TOKEN_EXPIRY = longPreferencesKey("token_expiry")
     }
 
-    val accessToken: Flow<String?> = context.authDataStore.data
+    override val accessToken: Flow<String?> = context.authDataStore.data
         .map { preferences ->
             preferences[PreferencesKeys.ACCESS_TOKEN]
         }
@@ -36,36 +38,28 @@ class AuthDataStore @Inject constructor(
             preferences[PreferencesKeys.REFRESH_TOKEN]
         }
 
-    val tokenExpirationTime: Flow<Long?> = context.authDataStore.data
-        .map { preferences ->
-            preferences[PreferencesKeys.TOKEN_EXPIRATION_TIME]
-        }
-
-    suspend fun saveTokens(accessToken: String, refreshToken: String?, expiresIn: Int) {
-        context.authDataStore.edit { preferences ->
-            preferences[PreferencesKeys.ACCESS_TOKEN] = accessToken
-            refreshToken?.let {
-                preferences[PreferencesKeys.REFRESH_TOKEN] = it
-            }
-            // Calculate expiration time in milliseconds
-            val expirationTime = System.currentTimeMillis() + (expiresIn * 1000L)
-            preferences[PreferencesKeys.TOKEN_EXPIRATION_TIME] = expirationTime
-        }
-    }
-
-    suspend fun clearTokens() {
+    override suspend fun clearTokens() {
         context.authDataStore.edit { preferences ->
             preferences.remove(PreferencesKeys.ACCESS_TOKEN)
             preferences.remove(PreferencesKeys.REFRESH_TOKEN)
-            preferences.remove(PreferencesKeys.TOKEN_EXPIRATION_TIME)
+            preferences.remove(PreferencesKeys.TOKEN_EXPIRY)
         }
     }
 
-    suspend fun isTokenExpired(): Boolean {
-        val expirationTime = tokenExpirationTime.first() ?: 0L
-        // Consider token expired 5 minutes before actual expiration to have a safety margin
-        val safetyMarginMs = 5 * 60 * 1000L
-        val currentTimeWithMargin = System.currentTimeMillis() + safetyMarginMs
-        return currentTimeWithMargin >= expirationTime
+    override suspend fun isTokenExpired(): Boolean {
+        val expiry = context.authDataStore.data.first()[PreferencesKeys.TOKEN_EXPIRY] ?: 0
+        return System.currentTimeMillis() >= expiry
+    }
+
+    suspend fun saveTokens(
+        accessToken: String,
+        refreshToken: String?,
+        expiresIn: Int
+    ) {
+        context.authDataStore.edit { preferences ->
+            preferences[PreferencesKeys.ACCESS_TOKEN] = accessToken
+            refreshToken?.let { preferences[PreferencesKeys.REFRESH_TOKEN] = it }
+            preferences[PreferencesKeys.TOKEN_EXPIRY] = System.currentTimeMillis() + (expiresIn * 1000L)
+        }
     }
 } 

@@ -1,6 +1,7 @@
 package com.daniel.spotyinsights.data.di
 
 import com.daniel.spotyinsights.data.network.SpotifyApiConfig
+import com.daniel.spotyinsights.data.network.interceptor.SpotifyAuthInterceptor
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -46,8 +47,18 @@ object NetworkModule {
     @Provides
     @Singleton
     @Named("spotify")
+    fun provideSpotifyOkHttpClient(
+        @Named("base") baseClient: OkHttpClient,
+        spotifyAuthInterceptor: SpotifyAuthInterceptor
+    ): OkHttpClient = baseClient.newBuilder()
+        .addInterceptor(spotifyAuthInterceptor)
+        .build()
+
+    @Provides
+    @Singleton
+    @Named("spotify")
     fun provideSpotifyRetrofit(
-        @Named("base") okHttpClient: OkHttpClient,
+        @Named("spotify") okHttpClient: OkHttpClient,
         moshi: Moshi
     ): Retrofit = Retrofit.Builder()
         .baseUrl(SpotifyApiConfig.BASE_URL)

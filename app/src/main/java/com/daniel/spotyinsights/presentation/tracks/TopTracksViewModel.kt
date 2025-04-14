@@ -52,6 +52,7 @@ class TopTracksViewModel @Inject constructor(
                 setState { copy(selectedTimeRange = event.timeRange) }
                 loadTracks()
             }
+
             is TopTracksEvent.Refresh -> onRefresh()
         }
     }
@@ -59,20 +60,26 @@ class TopTracksViewModel @Inject constructor(
     private fun onRefresh() {
         viewModelScope.launch {
             setState { copy(isRefreshing = true) }
-            
+
             when (val result = refreshTopTracksUseCase(uiState.value.selectedTimeRange)) {
                 is Result.Success -> {
                     setState { copy(error = null) }
                 }
+
                 is Result.Error -> {
-                    setState { 
+                    setState {
                         copy(
                             error = result.exception.message ?: "Failed to refresh tracks",
                             isRefreshing = false
                         )
                     }
-                    setEffect { TopTracksEffect.ShowError(result.exception.message ?: "Failed to refresh tracks") }
+                    setEffect {
+                        TopTracksEffect.ShowError(
+                            result.exception.message ?: "Failed to refresh tracks"
+                        )
+                    }
                 }
+
                 is Result.Loading -> {
                     // Loading state is handled by isRefreshing flag
                 }
@@ -94,6 +101,7 @@ class TopTracksViewModel @Inject constructor(
                             )
                         }
                     }
+
                     is Result.Error -> {
                         setState {
                             copy(
@@ -102,8 +110,13 @@ class TopTracksViewModel @Inject constructor(
                                 isRefreshing = false
                             )
                         }
-                        setEffect { TopTracksEffect.ShowError(result.exception.message ?: "Failed to load tracks") }
+                        setEffect {
+                            TopTracksEffect.ShowError(
+                                result.exception.message ?: "Failed to load tracks"
+                            )
+                        }
                     }
+
                     is Result.Loading -> {
                         setState {
                             copy(
@@ -122,8 +135,12 @@ class TopTracksViewModel @Inject constructor(
                         isRefreshing = false
                     )
                 }
-                setEffect { TopTracksEffect.ShowError(throwable.message ?: "Unknown error occurred") }
+                setEffect {
+                    TopTracksEffect.ShowError(
+                        throwable.message ?: "Unknown error occurred"
+                    )
+                }
             }
             .launchIn(viewModelScope)
     }
-} 
+}

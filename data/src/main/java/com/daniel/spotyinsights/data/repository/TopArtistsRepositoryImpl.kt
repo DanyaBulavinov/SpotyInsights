@@ -12,8 +12,10 @@ import com.daniel.spotyinsights.domain.model.DetailedArtist
 import com.daniel.spotyinsights.domain.model.Result
 import com.daniel.spotyinsights.domain.repository.TimeRange
 import com.daniel.spotyinsights.domain.repository.TopArtistsRepository
+import com.daniel.spotyinsights.domain.util.Logger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -28,6 +30,12 @@ class TopArtistsRepositoryImpl @Inject constructor(
     override fun getTopArtists(timeRange: TimeRange): Flow<Result<List<DetailedArtist>>> {
         val minFetchTimeMs = System.currentTimeMillis() - CACHE_DURATION_MS
         return artistDao.getTopArtists(minFetchTimeMs)
+            .onEach { artists ->
+                if (artists.isEmpty()) {
+                    Logger.i("No artists found in database, triggering refresh")
+                    refreshTopArtists(timeRange)
+                }
+            }
             .map { artists ->
                 Result.Success(artists.map { it.toDomainModel() })
             }
@@ -35,6 +43,7 @@ class TopArtistsRepositoryImpl @Inject constructor(
 
     override suspend fun refreshTopArtists(timeRange: TimeRange): Result<Unit> {
         return try {
+            Logger.i("Refreshing top artists for time range: $timeRange")
             val response = spotifyApiService.getTopArtists(
                 timeRange = timeRange.toApiValue(),
                 limit = 50
@@ -62,6 +71,7 @@ class TopArtistsRepositoryImpl @Inject constructor(
                 }
             }
 
+            Logger.i("Inserting ${artists.size} artists into database")
             artistDao.insertArtistsWithRelations(
                 artists = artists,
                 genres = genres.distinctBy { it.name },
@@ -71,9 +81,11 @@ class TopArtistsRepositoryImpl @Inject constructor(
             )
 
             artistDao.deleteOldArtists(currentTimeMs - CACHE_DURATION_MS)
+            Logger.i("Successfully refreshed top artists")
 
             Result.Success(Unit)
         } catch (e: Exception) {
+            Logger.e("Failed to refresh top artists", e)
             Result.Error(e)
         }
     }
