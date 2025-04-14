@@ -11,6 +11,7 @@ import com.daniel.spotyinsights.domain.repository.TimeRange
 import com.daniel.spotyinsights.domain.usecase.tracks.GetTopTracksUseCase
 import com.daniel.spotyinsights.domain.usecase.tracks.RefreshTopTracksUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -40,6 +41,8 @@ class TopTracksViewModel @Inject constructor(
     private val refreshTopTracksUseCase: RefreshTopTracksUseCase,
 ) : BaseViewModel<TopTracksState, TopTracksEvent, TopTracksEffect>() {
 
+    private var currentLoadJob: Job? = null
+
     override fun createInitialState(): TopTracksState = TopTracksState()
 
     init {
@@ -64,6 +67,7 @@ class TopTracksViewModel @Inject constructor(
             when (val result = refreshTopTracksUseCase(uiState.value.selectedTimeRange)) {
                 is Result.Success -> {
                     setState { copy(error = null) }
+                    loadTracks() // Reload tracks after successful refresh
                 }
 
                 is Result.Error -> {
@@ -88,59 +92,88 @@ class TopTracksViewModel @Inject constructor(
     }
 
     private fun loadTracks() {
-        getTopTracksUseCase(uiState.value.selectedTimeRange)
-            .onEach { result ->
-                when (result) {
-                    is Result.Success -> {
-                        setState {
-                            copy(
-                                tracks = result.data,
-                                isLoading = false,
-                                error = null,
-                                isRefreshing = false
-                            )
+        // Cancel any ongoing loading operation
+        currentLoadJob?.cancel()
+
+        currentLoadJob = viewModelScope.launch {
+            try {
+                getTopTracksUseCase(uiState.value.selectedTimeRange)
+                    .onEach { result ->
+                        when (result) {
+                            is Result.Success -> {
+                                setState {
+                                    copy(
+                                        tracks = result.data,
+                                        isLoading = false,
+                                        error = null,
+                                        isRefreshing = false
+                                    )
+                                }
+                            }
+
+                            is Result.Error -> {
+                                setState {
+                                    copy(
+                                        error = result.exception.message ?: "Failed to load tracks",
+                                        isLoading = false,
+                                        isRefreshing = false
+                                    )
+                                }
+                                setEffect {
+                                    TopTracksEffect.ShowError(
+                                        result.exception.message ?: "Failed to load tracks"
+                                    )
+                                }
+                            }
+
+                            is Result.Loading -> {
+                                setState {
+                                    copy(
+                                        isLoading = true,
+                                        error = null
+                                    )
+                                }
+                            }
                         }
                     }
-
-                    is Result.Error -> {
-                        setState {
-                            copy(
-                                error = result.exception.message ?: "Failed to load tracks",
-                                isLoading = false,
-                                isRefreshing = false
-                            )
-                        }
-                        setEffect {
-                            TopTracksEffect.ShowError(
-                                result.exception.message ?: "Failed to load tracks"
-                            )
+                    .catch { throwable ->
+                        if (currentLoadJob?.isCancelled == false) {
+                            setState {
+                                copy(
+                                    error = throwable.message ?: "Unknown error occurred",
+                                    isLoading = false,
+                                    isRefreshing = false
+                                )
+                            }
+                            setEffect {
+                                TopTracksEffect.ShowError(
+                                    throwable.message ?: "Unknown error occurred"
+                                )
+                            }
                         }
                     }
-
-                    is Result.Loading -> {
-                        setState {
-                            copy(
-                                isLoading = true,
-                                error = null
-                            )
-                        }
+                    .launchIn(this)
+            } catch (e: Exception) {
+                if (currentLoadJob?.isCancelled == false) {
+                    setState {
+                        copy(
+                            error = e.message ?: "Unknown error occurred",
+                            isLoading = false,
+                            isRefreshing = false
+                        )
+                    }
+                    setEffect {
+                        TopTracksEffect.ShowError(
+                            e.message ?: "Unknown error occurred"
+                        )
                     }
                 }
             }
-            .catch { throwable ->
-                setState {
-                    copy(
-                        error = throwable.message ?: "Unknown error occurred",
-                        isLoading = false,
-                        isRefreshing = false
-                    )
-                }
-                setEffect {
-                    TopTracksEffect.ShowError(
-                        throwable.message ?: "Unknown error occurred"
-                    )
-                }
-            }
-            .launchIn(viewModelScope)
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        currentLoadJob?.cancel()
     }
 }

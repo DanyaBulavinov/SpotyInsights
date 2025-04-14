@@ -38,10 +38,10 @@ fun ArtistItem(
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(artist.images.first())
+                .data(artist.images.firstOrNull())
                 .crossfade(true)
                 .build(),
-            contentDescription = null,
+            contentDescription = "Artist image for ${artist.name}",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(120.dp)
