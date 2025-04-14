@@ -3,6 +3,9 @@ package com.daniel.spotyinsights.auth.di
 import com.daniel.spotyinsights.auth.api.SpotifyAuthService
 import com.daniel.spotyinsights.auth.interceptor.AuthInterceptor
 import com.daniel.spotyinsights.auth.repository.SpotifyAuthRepository
+import com.daniel.spotyinsights.auth.repository.SpotifyAuthRepositoryImpl
+import com.daniel.spotyinsights.auth.data.AuthDataStore
+import com.daniel.spotyinsights.domain.repository.TokenRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -21,6 +24,10 @@ abstract class AuthModule {
     abstract fun bindSpotifyAuthRepository(
         repository: SpotifyAuthRepositoryImpl
     ): SpotifyAuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTokenRepository(impl: AuthDataStore): TokenRepository
 
     companion object {
         @Provides
