@@ -99,22 +99,22 @@ class TopArtistsRepositoryImpl @Inject constructor(
 
                 // First insert artists and genres
                 artistDao.insertArtists(artists)
-                
+
                 // Insert genres and get their IDs
                 if (genres.isNotEmpty()) {
                     val distinctGenres = genres.distinctBy { it.name }
                     artistDao.insertGenres(distinctGenres)
-                    
+
                     // Query back the inserted genres to get their generated IDs
                     val insertedGenres = artistDao.getGenresByNames(distinctGenres.map { it.name })
-                    
+
                     // Create genre cross-references using the generated IDs
                     val genreCrossRefs = artistGenreCrossRefs.mapNotNull { tempRef ->
                         insertedGenres.find { it.name == tempRef.genreName }?.let { genre ->
                             ArtistGenreCrossRef(artistId = tempRef.artistId, genreId = genre.id)
                         }
                     }
-                    
+
                     if (genreCrossRefs.isNotEmpty()) {
                         artistDao.insertArtistGenreCrossRefs(genreCrossRefs)
                     }

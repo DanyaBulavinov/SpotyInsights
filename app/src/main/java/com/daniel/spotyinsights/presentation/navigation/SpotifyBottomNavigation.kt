@@ -9,17 +9,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.daniel.spotyinsights.R
+import com.daniel.spotyinsights.presentation.navigation.Screen.Companion.bottomNavItems
 
 @Composable
 fun SpotifyBottomNavigation(
     navController: NavController
 ) {
-    val items = listOf(
-        Screen.TopTracks,
-        Screen.TopArtists,
-        Screen.Recommendations
-    )
+    val items = bottomNavItems
 
     NavigationBar {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
