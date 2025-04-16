@@ -6,6 +6,7 @@
     <string name="nav_top_tracks">Top Tracks</string>
     <string name="nav_top_artists">Top Artists</string>
     <string name="nav_recommendations">For You</string>
+    <string name="nav_new_releases">New Releases</string>
 
     <!-- Time Ranges -->
     <string name="time_range_short">4 Weeks</string>

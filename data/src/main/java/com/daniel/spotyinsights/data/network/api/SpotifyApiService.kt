@@ -1,5 +1,6 @@
 package com.daniel.spotyinsights.data.network.api
 
+import com.daniel.spotyinsights.data.network.model.album.SpotifyNewReleasesResponse
 import com.daniel.spotyinsights.data.network.model.artist.SpotifyArtistResponse
 import com.daniel.spotyinsights.data.network.model.recommendations.SpotifyAvailableGenreSeedsResponse
 import com.daniel.spotyinsights.data.network.model.recommendations.SpotifyRecommendationsResponse
@@ -35,4 +36,11 @@ interface SpotifyApiService {
 
     @GET("recommendations/available-genre-seeds")
     suspend fun getAvailableGenreSeeds(): SpotifyAvailableGenreSeedsResponse
+
+    @GET("browse/new-releases")
+    suspend fun getNewReleases(
+        @Query("country") country: String? = null,
+        @Query("limit") limit: Int = 20,
+        @Query("offset") offset: Int = 0
+    ): SpotifyNewReleasesResponse
 } 
