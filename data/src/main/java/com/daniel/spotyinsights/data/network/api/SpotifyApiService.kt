@@ -1,5 +1,6 @@
 package com.daniel.spotyinsights.data.network.api
 
+import com.daniel.spotyinsights.data.network.model.album.SpotifyNewReleasesResponse
 import com.daniel.spotyinsights.data.network.model.artist.SpotifyArtistResponse
 import com.daniel.spotyinsights.data.network.model.recommendations.SpotifyAvailableGenreSeedsResponse
 import com.daniel.spotyinsights.data.network.model.recommendations.SpotifyRecommendationsResponse
