@@ -23,11 +23,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.daniel.spotyinsights.R
 import com.daniel.spotyinsights.presentation.components.ErrorState
 import com.daniel.spotyinsights.presentation.components.TimeRangeSelector
@@ -37,11 +37,11 @@ import com.daniel.spotyinsights.presentation.components.TrackItemSkeleton
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopTracksScreen(
-    viewModel: TopTracksViewModel = hiltViewModel()
+    viewModel: TopTracksViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val pullToRefreshState = rememberPullToRefreshState()
-    val uriHandler = LocalUriHandler.current
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
@@ -102,6 +102,7 @@ fun TopTracksScreen(
                             }
                         }
                     }
+
                     state.error != null && state.tracks.isEmpty() -> {
                         Box(
                             modifier = Modifier.fillMaxSize(),
@@ -113,6 +114,7 @@ fun TopTracksScreen(
                             )
                         }
                     }
+
                     else -> {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize()
@@ -124,7 +126,7 @@ fun TopTracksScreen(
                                 TrackItem(
                                     track = track,
                                     onTrackClick = { clickedTrack ->
-                                        uriHandler.openUri(clickedTrack.spotifyUrl)
+                                        navController.navigate("track_detail/${clickedTrack.id}")
                                     }
                                 )
                             }

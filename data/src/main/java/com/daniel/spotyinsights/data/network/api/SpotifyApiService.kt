@@ -3,8 +3,10 @@ package com.daniel.spotyinsights.data.network.api
 import com.daniel.spotyinsights.data.network.model.artist.SpotifyArtistResponse
 import com.daniel.spotyinsights.data.network.model.recommendations.SpotifyAvailableGenreSeedsResponse
 import com.daniel.spotyinsights.data.network.model.recommendations.SpotifyRecommendationsResponse
+import com.daniel.spotyinsights.data.network.model.track.SpotifyTrack
 import com.daniel.spotyinsights.data.network.model.track.SpotifyTrackResponse
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface SpotifyApiService {
@@ -35,4 +37,9 @@ interface SpotifyApiService {
 
     @GET("recommendations/available-genre-seeds")
     suspend fun getAvailableGenreSeeds(): SpotifyAvailableGenreSeedsResponse
+
+    @GET("tracks/{id}")
+    suspend fun getTrackById(
+        @Path("id") id: String
+    ): SpotifyTrack
 } 

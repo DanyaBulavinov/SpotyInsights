@@ -16,4 +16,7 @@
     <string name="track_duration" formatted="false">%1$d:%02d</string>
     <string name="error_loading_tracks">Failed to load tracks</string>
     <string name="try_again">Try Again</string>
+
+    <string name="track_detail_title">Track Details</string>
+    <string name="back">Back</string>
 </resources>

@@ -30,12 +30,4 @@ sealed class Screen(
         icon = Icons.Filled.Favorite,
         labelResId = R.string.nav_recommendations
     )
-
-    companion object {
-        val bottomNavItems = listOf(
-            TopTracks,
-            TopArtists,
-            Recommendations
-        )
-    }
 }
