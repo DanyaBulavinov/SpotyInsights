@@ -14,9 +14,11 @@ import com.daniel.spotyinsights.data.repository.RecommendationsRepositoryImpl
 import com.daniel.spotyinsights.data.repository.TopArtistsRepositoryImpl
 import com.daniel.spotyinsights.data.repository.TopTracksRepositoryImpl
 import com.daniel.spotyinsights.domain.repository.NewReleasesRepository
+import com.daniel.spotyinsights.data.repository.TrackRepositoryImpl
 import com.daniel.spotyinsights.domain.repository.RecommendationsRepository
 import com.daniel.spotyinsights.domain.repository.TopArtistsRepository
 import com.daniel.spotyinsights.domain.repository.TopTracksRepository
+import com.daniel.spotyinsights.domain.repository.TrackRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -112,4 +114,12 @@ object DataModule {
     ): NewReleasesRepository {
         return NewReleasesRepositoryImpl(spotifyApiService)
     }
-} 
+
+    @Provides
+    @Singleton
+    fun provideTrackRepository(
+        spotifyApiService: SpotifyApiService
+    ): TrackRepository {
+        return TrackRepositoryImpl(spotifyApiService)
+    }
+}

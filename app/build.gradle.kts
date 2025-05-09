@@ -114,4 +114,7 @@ dependencies {
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.ui.test)
     debugImplementation(libs.compose.ui.tooling)
+
+    // Palette
+    implementation("androidx.palette:palette-ktx:1.0.0")
 }

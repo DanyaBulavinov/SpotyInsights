@@ -24,4 +24,4 @@ data class Album(
     val releaseDate: String,
     val imageUrl: String,
     val spotifyUrl: String
-) 
+)

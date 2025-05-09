@@ -69,4 +69,4 @@ data class SpotifyImage(
     val height: Int?,
     @Json(name = "width")
     val width: Int?
-) 
+)
