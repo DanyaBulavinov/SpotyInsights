@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.daniel.spotyinsights.presentation.releases.NewReleasesScreen
 import androidx.navigation.navArgument
 import com.daniel.spotyinsights.presentation.recommendations.RecommendationsScreen
 import com.daniel.spotyinsights.presentation.top_artists.TopArtistsScreen
@@ -26,8 +27,8 @@ fun SpotifyNavigation(
         composable(Screen.TopArtists.route) {
             TopArtistsScreen()
         }
-        composable(Screen.Recommendations.route) {
-            RecommendationsScreen()
+        composable(Screen.NewReleases.route) {
+            NewReleasesScreen()
         }
         composable(
             route = "track_detail/{trackId}",

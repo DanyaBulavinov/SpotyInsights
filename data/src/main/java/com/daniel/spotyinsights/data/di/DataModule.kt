@@ -3,13 +3,17 @@ package com.daniel.spotyinsights.data.di
 import android.content.Context
 import android.util.Log
 import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.daniel.spotyinsights.data.local.SpotifyDatabase
 import com.daniel.spotyinsights.data.local.dao.ArtistDao
 import com.daniel.spotyinsights.data.local.dao.TrackDao
 import com.daniel.spotyinsights.data.network.api.SpotifyApiService
+import com.daniel.spotyinsights.data.repository.NewReleasesRepositoryImpl
 import com.daniel.spotyinsights.data.repository.RecommendationsRepositoryImpl
 import com.daniel.spotyinsights.data.repository.TopArtistsRepositoryImpl
 import com.daniel.spotyinsights.data.repository.TopTracksRepositoryImpl
+import com.daniel.spotyinsights.domain.repository.NewReleasesRepository
 import com.daniel.spotyinsights.data.repository.TrackRepositoryImpl
 import com.daniel.spotyinsights.domain.repository.RecommendationsRepository
 import com.daniel.spotyinsights.domain.repository.TopArtistsRepository
@@ -23,8 +27,6 @@ import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import javax.inject.Named
 import javax.inject.Singleton
-import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -41,23 +43,23 @@ object DataModule {
             SpotifyDatabase::class.java,
             SpotifyDatabase.DATABASE_NAME
         )
-        .addMigrations(
-            SpotifyDatabase.MIGRATION_2_3,
-            SpotifyDatabase.MIGRATION_3_4
-        )
-        .fallbackToDestructiveMigration()
-        .addCallback(object : RoomDatabase.Callback() {
-            override fun onCreate(db: SupportSQLiteDatabase) {
-                super.onCreate(db)
-                Log.d("DataModule", "Database created")
-            }
+            .addMigrations(
+                SpotifyDatabase.MIGRATION_2_3,
+                SpotifyDatabase.MIGRATION_3_4
+            )
+            .fallbackToDestructiveMigration()
+            .addCallback(object : RoomDatabase.Callback() {
+                override fun onCreate(db: SupportSQLiteDatabase) {
+                    super.onCreate(db)
+                    Log.d("DataModule", "Database created")
+                }
 
-            override fun onOpen(db: SupportSQLiteDatabase) {
-                super.onOpen(db)
-                Log.d("DataModule", "Database opened")
-            }
-        })
-        .build()
+                override fun onOpen(db: SupportSQLiteDatabase) {
+                    super.onOpen(db)
+                    Log.d("DataModule", "Database opened")
+                }
+            })
+            .build()
     }
 
     @Provides
@@ -107,9 +109,17 @@ object DataModule {
 
     @Provides
     @Singleton
+    fun provideNewReleasesRepository(
+        spotifyApiService: SpotifyApiService
+    ): NewReleasesRepository {
+        return NewReleasesRepositoryImpl(spotifyApiService)
+    }
+
+    @Provides
+    @Singleton
     fun provideTrackRepository(
         spotifyApiService: SpotifyApiService
     ): TrackRepository {
         return TrackRepositoryImpl(spotifyApiService)
     }
-} 
+}

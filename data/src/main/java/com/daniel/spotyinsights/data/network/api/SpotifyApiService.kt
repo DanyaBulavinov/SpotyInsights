@@ -38,8 +38,15 @@ interface SpotifyApiService {
     @GET("recommendations/available-genre-seeds")
     suspend fun getAvailableGenreSeeds(): SpotifyAvailableGenreSeedsResponse
 
+    @GET("browse/new-releases")
+    suspend fun getNewReleases(
+        @Query("country") country: String? = null,
+        @Query("limit") limit: Int = 20,
+        @Query("offset") offset: Int = 0
+    ): SpotifyNewReleasesResponse
+
     @GET("tracks/{id}")
     suspend fun getTrackById(
         @Path("id") id: String
     ): SpotifyTrack
-} 
+}
