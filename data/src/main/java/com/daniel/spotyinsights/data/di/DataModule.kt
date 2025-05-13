@@ -19,6 +19,8 @@ import com.daniel.spotyinsights.domain.repository.RecommendationsRepository
 import com.daniel.spotyinsights.domain.repository.TopArtistsRepository
 import com.daniel.spotyinsights.domain.repository.TopTracksRepository
 import com.daniel.spotyinsights.domain.repository.TrackRepository
+import com.daniel.spotyinsights.data.repository.ArtistRepositoryImpl
+import com.daniel.spotyinsights.domain.repository.ArtistRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -121,5 +123,13 @@ object DataModule {
         spotifyApiService: SpotifyApiService
     ): TrackRepository {
         return TrackRepositoryImpl(spotifyApiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideArtistRepository(
+        spotifyApiService: SpotifyApiService
+    ): ArtistRepository {
+        return ArtistRepositoryImpl(spotifyApiService)
     }
 }

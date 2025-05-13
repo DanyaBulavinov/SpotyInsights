@@ -5,9 +5,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.daniel.spotyinsights.presentation.releases.NewReleasesScreen
 import androidx.navigation.navArgument
-import com.daniel.spotyinsights.presentation.recommendations.RecommendationsScreen
+import com.daniel.spotyinsights.presentation.artists.ArtistDetailScreen
+import com.daniel.spotyinsights.presentation.releases.NewReleasesScreen
 import com.daniel.spotyinsights.presentation.top_artists.TopArtistsScreen
 import com.daniel.spotyinsights.presentation.tracks.TopTracksScreen
 import com.daniel.spotyinsights.presentation.tracks.TrackDetailScreen
@@ -25,7 +25,7 @@ fun SpotifyNavigation(
             TopTracksScreen(navController = navController)
         }
         composable(Screen.TopArtists.route) {
-            TopArtistsScreen()
+            TopArtistsScreen(navController = navController)
         }
         composable(Screen.NewReleases.route) {
             NewReleasesScreen()
@@ -36,6 +36,13 @@ fun SpotifyNavigation(
         ) { backStackEntry ->
             val trackId = backStackEntry.arguments?.getString("trackId") ?: ""
             TrackDetailScreen(trackId = trackId, onBack = { navController.popBackStack() })
+        }
+        composable(
+            route = "artist_detail/{artistId}",
+            arguments = listOf(navArgument("artistId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val artistId = backStackEntry.arguments?.getString("artistId") ?: ""
+            ArtistDetailScreen(artistId = artistId, onBack = { navController.popBackStack() })
         }
     }
 } 

@@ -6,5 +6,6 @@ data class DetailedArtist(
     val spotifyUrl: String,
     val genres: List<String>,
     val images: List<String>,
-    val popularity: Int
+    val popularity: Int,
+    val followers: Int? = null
 )

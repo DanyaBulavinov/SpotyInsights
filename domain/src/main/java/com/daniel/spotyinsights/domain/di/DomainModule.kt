@@ -1,8 +1,10 @@
 package com.daniel.spotyinsights.domain.di
 
+import com.daniel.spotyinsights.domain.repository.ArtistRepository
 import com.daniel.spotyinsights.domain.repository.RecommendationsRepository
 import com.daniel.spotyinsights.domain.repository.TopArtistsRepository
 import com.daniel.spotyinsights.domain.repository.TopTracksRepository
+import com.daniel.spotyinsights.domain.usecase.artist.GetArtistByIdUseCase
 import com.daniel.spotyinsights.domain.usecase.artist.GetTopArtistsUseCase
 import com.daniel.spotyinsights.domain.usecase.artist.RefreshTopArtistsUseCase
 import com.daniel.spotyinsights.domain.usecase.recommendations.GetGenreSeedsUseCase
@@ -60,5 +62,11 @@ object DomainModule {
     @Singleton
     fun provideRefreshRecommendationsUseCase(repository: RecommendationsRepository): RefreshRecommendationsUseCase {
         return RefreshRecommendationsUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetArtistByIdUseCase(repository: ArtistRepository): GetArtistByIdUseCase {
+        return GetArtistByIdUseCase(repository)
     }
 } 
