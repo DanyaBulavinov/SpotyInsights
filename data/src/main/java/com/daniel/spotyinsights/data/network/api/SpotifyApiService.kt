@@ -1,6 +1,7 @@
 package com.daniel.spotyinsights.data.network.api
 
 import com.daniel.spotyinsights.data.network.model.album.SpotifyNewReleasesResponse
+import com.daniel.spotyinsights.data.network.model.artist.SpotifyArtist
 import com.daniel.spotyinsights.data.network.model.artist.SpotifyArtistResponse
 import com.daniel.spotyinsights.data.network.model.recommendations.SpotifyAvailableGenreSeedsResponse
 import com.daniel.spotyinsights.data.network.model.recommendations.SpotifyRecommendationsResponse
@@ -50,4 +51,9 @@ interface SpotifyApiService {
     suspend fun getTrackById(
         @Path("id") id: String
     ): SpotifyTrack
+
+    @GET("artists/{id}")
+    suspend fun getArtistById(
+        @Path("id") id: String
+    ): SpotifyArtist
 }

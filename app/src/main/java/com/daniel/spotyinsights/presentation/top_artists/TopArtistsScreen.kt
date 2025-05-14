@@ -34,15 +34,16 @@ import com.daniel.spotyinsights.presentation.components.ArtistItem
 import com.daniel.spotyinsights.presentation.components.ArtistItemSkeleton
 import com.daniel.spotyinsights.presentation.components.ErrorState
 import com.daniel.spotyinsights.presentation.components.TimeRangeSelector
+import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopArtistsScreen(
-    viewModel: TopArtistsViewModel = hiltViewModel()
+    viewModel: TopArtistsViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val pullToRefreshState = rememberPullToRefreshState()
-    val uriHandler = LocalUriHandler.current
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
@@ -127,7 +128,7 @@ fun TopArtistsScreen(
                                 ArtistItem(
                                     artist = artist,
                                     onArtistClick = { clickedArtist ->
-                                        uriHandler.openUri(clickedArtist.spotifyUrl)
+                                        navController.navigate("artist_detail/${clickedArtist.id}")
                                     }
                                 )
                             }

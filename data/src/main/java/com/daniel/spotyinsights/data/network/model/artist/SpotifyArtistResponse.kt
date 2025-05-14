@@ -28,7 +28,9 @@ data class SpotifyArtist(
     @Json(name = "images")
     val images: List<SpotifyImageResponse>,
     @Json(name = "popularity")
-    val popularity: Int
+    val popularity: Int,
+    @Json(name = "followers")
+    val followers: SpotifyFollowersResponse? = null
 )
 
 @JsonClass(generateAdapter = true)
@@ -39,4 +41,10 @@ data class SpotifyImageResponse(
     val height: Int?,
     @Json(name = "width")
     val width: Int?
+)
+
+@JsonClass(generateAdapter = true)
+data class SpotifyFollowersResponse(
+    @Json(name = "total")
+    val total: Int
 ) 
