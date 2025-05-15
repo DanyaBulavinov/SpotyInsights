@@ -37,16 +37,15 @@ class TopArtistsRepositoryImpl @Inject constructor(
 
     override fun getTopArtists(timeRange: TimeRange): Flow<Result<List<DetailedArtist>>> {
         val minFetchTimeMs = System.currentTimeMillis() - CACHE_DURATION_MS
-        return artistDao.getTopArtists(minFetchTimeMs, timeRange.toApiValue())
-            .map { artists ->
-                if (artists.isEmpty()) {
-                    // If we have no data, return an empty list instead of Loading
-                    // The ViewModel will handle the refresh
-                    Result.Success(emptyList())
-                } else {
-                    Result.Success(artists.map { it.toDomainModel() })
-                }
+        return artistDao.getTopArtists(minFetchTimeMs, timeRange.toApiValue()).map { artists ->
+            if (artists.isEmpty()) {
+                // If we have no data, return an empty list instead of Loading
+                // The ViewModel will handle the refresh
+                Result.Success(emptyList())
+            } else {
+                Result.Success(artists.map { it.toDomainModel() })
             }
+        }
     }
 
     override suspend fun refreshTopArtists(timeRange: TimeRange): Result<Unit> {

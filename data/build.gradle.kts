@@ -15,6 +15,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        val properties = com.android.build.gradle.internal.cxx.configure.gradleLocalProperties(project.rootDir)
+        buildConfigField("String", "LASTFM_API_KEY", "\"${properties.getProperty("LASTFM_API_KEY", "")}\"")
+        buildConfigField("String", "LASTFM_SHARED_SECRET", "\"${properties.getProperty("LASTFM_SHARED_SECRET", "")}\"")
     }
 
     buildTypes {
@@ -25,6 +29,10 @@ android {
                 "proguard-rules.pro"
             )
         }
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     compileOptions {
