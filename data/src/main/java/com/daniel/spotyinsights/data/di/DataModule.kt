@@ -8,19 +8,22 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.daniel.spotyinsights.data.local.SpotifyDatabase
 import com.daniel.spotyinsights.data.local.dao.ArtistDao
 import com.daniel.spotyinsights.data.local.dao.TrackDao
+import com.daniel.spotyinsights.data.network.api.LastFmApiService
 import com.daniel.spotyinsights.data.network.api.SpotifyApiService
+import com.daniel.spotyinsights.data.repository.ArtistRepositoryImpl
+import com.daniel.spotyinsights.data.repository.LastFmRepositoryImpl
 import com.daniel.spotyinsights.data.repository.NewReleasesRepositoryImpl
 import com.daniel.spotyinsights.data.repository.RecommendationsRepositoryImpl
 import com.daniel.spotyinsights.data.repository.TopArtistsRepositoryImpl
 import com.daniel.spotyinsights.data.repository.TopTracksRepositoryImpl
-import com.daniel.spotyinsights.domain.repository.NewReleasesRepository
 import com.daniel.spotyinsights.data.repository.TrackRepositoryImpl
+import com.daniel.spotyinsights.domain.repository.ArtistRepository
+import com.daniel.spotyinsights.domain.repository.LastFmRepository
+import com.daniel.spotyinsights.domain.repository.NewReleasesRepository
 import com.daniel.spotyinsights.domain.repository.RecommendationsRepository
 import com.daniel.spotyinsights.domain.repository.TopArtistsRepository
 import com.daniel.spotyinsights.domain.repository.TopTracksRepository
 import com.daniel.spotyinsights.domain.repository.TrackRepository
-import com.daniel.spotyinsights.data.repository.ArtistRepositoryImpl
-import com.daniel.spotyinsights.domain.repository.ArtistRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -131,5 +134,13 @@ object DataModule {
         spotifyApiService: SpotifyApiService
     ): ArtistRepository {
         return ArtistRepositoryImpl(spotifyApiService)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLastFmRepository(
+        lastFmApiService: LastFmApiService
+    ): LastFmRepository {
+        return LastFmRepositoryImpl(lastFmApiService)
     }
 }

@@ -77,4 +77,22 @@ object NetworkModule {
         .client(okHttpClient)
         .addConverterFactory(MoshiConverterFactory.create(moshi))
         .build()
+
+    @Provides
+    @Singleton
+    @Named("lastfm")
+    fun provideLastFmRetrofit(
+        @Named("base") okHttpClient: OkHttpClient,
+        moshi: Moshi
+    ): Retrofit = Retrofit.Builder()
+        .baseUrl(com.daniel.spotyinsights.data.network.LastFmApiConfig.BASE_URL)
+        .client(okHttpClient)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .build()
+
+    @Provides
+    @Singleton
+    fun provideLastFmApiService(@Named("lastfm") retrofit: Retrofit): com.daniel.spotyinsights.data.network.api.LastFmApiService {
+        return retrofit.create(com.daniel.spotyinsights.data.network.api.LastFmApiService::class.java)
+    }
 }
