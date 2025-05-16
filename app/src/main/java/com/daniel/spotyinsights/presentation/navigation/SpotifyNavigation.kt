@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.daniel.spotyinsights.presentation.artists.ArtistDetailScreen
 import com.daniel.spotyinsights.presentation.releases.NewReleasesScreen
+import com.daniel.spotyinsights.presentation.stats.StatsScreen
 import com.daniel.spotyinsights.presentation.top_artists.TopArtistsScreen
 import com.daniel.spotyinsights.presentation.tracks.TopTracksScreen
 import com.daniel.spotyinsights.presentation.tracks.TrackDetailScreen
@@ -29,6 +30,9 @@ fun SpotifyNavigation(
         }
         composable(Screen.NewReleases.route) {
             NewReleasesScreen()
+        }
+        composable(Screen.Stats.route) {
+            StatsScreen()
         }
         composable(
             route = "track_detail/{trackId}",

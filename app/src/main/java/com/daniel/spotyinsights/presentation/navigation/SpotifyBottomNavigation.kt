@@ -6,6 +6,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -25,7 +26,7 @@ fun SpotifyBottomNavigation(
             NavigationBarItem(
                 icon = {
                     Icon(
-                        imageVector = screen.icon,
+                        painter = painterResource(id = screen.iconRes),
                         contentDescription = stringResource(id = screen.labelResId)
                     )
                 },
