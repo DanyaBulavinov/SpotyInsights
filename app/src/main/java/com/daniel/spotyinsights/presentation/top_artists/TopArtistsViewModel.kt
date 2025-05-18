@@ -44,7 +44,12 @@ class TopArtistsViewModel @Inject constructor(
                             isLoading = true
                         )
                     }
-                    loadArtists(forceRefresh = true)
+                    // Always load from local DB first for instant UI update
+                    loadArtists(forceRefresh = false)
+                    // Then trigger a refresh in the background
+                    viewModelScope.launch {
+                        refreshTopArtistsUseCase(event.timeRange)
+                    }
                 }
             }
 

@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -52,6 +54,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.palette.graphics.Palette
@@ -61,6 +64,7 @@ import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.daniel.spotyinsights.R
 import com.daniel.spotyinsights.domain.model.DetailedArtist
+import com.daniel.spotyinsights.domain.model.Track
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,7 +73,7 @@ fun ArtistDetailScreen(
     onBack: () -> Unit,
     viewModel: ArtistDetailViewModel = hiltViewModel()
 ) {
-    val state = viewModel.uiState.collectAsStateWithLifecycle().value
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val density = LocalDensity.current
@@ -137,10 +141,14 @@ fun ArtistDetailScreen(
                 .background(
                     brush = Brush.linearGradient(
                         colors = listOf(
-                            (dominantColor ?: fallbackColor).ensureMinLuminance().lighten(0.001f).copy(alpha = 0.85f),
-                            (vibrantColor ?: fallbackColor2).ensureMinLuminance().lighten(0.001f).copy(alpha = 0.65f),
-                            (dominantColor ?: fallbackColor).lighten(0.85f).ensureMinLuminance().lighten(0.001f).copy(alpha = 0.45f),
-                            (vibrantColor ?: fallbackColor2).lighten(0.7f).ensureMinLuminance().lighten(0.001f).copy(alpha = 0.35f)
+                            (dominantColor ?: fallbackColor).ensureMinLuminance().lighten(0.001f)
+                                .copy(alpha = 0.85f),
+                            (vibrantColor ?: fallbackColor2).ensureMinLuminance().lighten(0.001f)
+                                .copy(alpha = 0.65f),
+                            (dominantColor ?: fallbackColor).lighten(0.85f).ensureMinLuminance()
+                                .lighten(0.001f).copy(alpha = 0.45f),
+                            (vibrantColor ?: fallbackColor2).lighten(0.7f).ensureMinLuminance()
+                                .lighten(0.001f).copy(alpha = 0.35f)
                         ),
                         start = Offset(
                             x = screenWidth * (0.05f + (artistId.hashFloat() * 0.2f)),
@@ -178,7 +186,10 @@ fun ArtistDetailScreen(
                             enter = fadeIn(),
                             exit = fadeOut()
                         ) {
-                            ArtistDetailContent(state.artist!!)
+                            ArtistDetailContent(
+                                artist = state.artist!!,
+                                topTracks = state.topTracks
+                            )
                         }
                     }
                 }
@@ -188,7 +199,11 @@ fun ArtistDetailScreen(
 }
 
 @Composable
-private fun ArtistDetailContent(artist: DetailedArtist, topPadding: Dp = 16.dp) {
+private fun ArtistDetailContent(
+    artist: DetailedArtist,
+    topTracks: List<Track>,
+    topPadding: Dp = 16.dp
+) {
     val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
@@ -279,6 +294,45 @@ private fun ArtistDetailContent(artist: DetailedArtist, topPadding: Dp = 16.dp) 
                             label = "Followers",
                             value = artist.followers?.toString() ?: "-",
                             unified = true
+                        )
+                    }
+                }
+            }
+        }
+        // Top Tracks horizontal list
+        if (topTracks.isNotEmpty()) {
+            Text(
+                text = "Top Tracks",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(start = 16.dp, bottom = 8.dp, top = 8.dp)
+            )
+            Row(
+                modifier = Modifier
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = 8.dp)
+            ) {
+                topTracks.forEach { track ->
+                    Column(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .width(100.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        AsyncImage(
+                            model = track.album.imageUrl,
+                            contentDescription = track.name,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .size(80.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                        )
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = track.name,
+                            style = MaterialTheme.typography.bodySmall,
+                            maxLines = 2,
+                            fontSize = 13.sp,
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
