@@ -1,5 +1,6 @@
 package com.daniel.spotyinsights.presentation.components
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,6 +40,8 @@ fun TrackItem(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // Log the track name and durationMs for debugging
+        Log.d("TrackItem", "Track: ${track.name}, durationMs: ${track.durationMs}")
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(track.album.imageUrl)
@@ -76,12 +79,11 @@ fun TrackItem(
 
         Spacer(modifier = Modifier.width(16.dp))
 
+        val minutes = track.durationMs / 60000
+        val seconds = (track.durationMs / 1000) % 60
+        val durationText = String.format("%d:%02d", minutes, seconds)
         Text(
-            text = stringResource(
-                R.string.track_duration,
-                track.durationMs / 60000, // minutes
-                (track.durationMs / 1000) % 60 // seconds
-            ),
+            text = durationText,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
