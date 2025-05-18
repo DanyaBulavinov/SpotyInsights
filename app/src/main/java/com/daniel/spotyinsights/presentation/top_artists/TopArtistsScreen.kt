@@ -15,7 +15,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,18 +23,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.daniel.spotyinsights.R
 import com.daniel.spotyinsights.presentation.components.ArtistItem
 import com.daniel.spotyinsights.presentation.components.ArtistItemSkeleton
 import com.daniel.spotyinsights.presentation.components.ErrorState
 import com.daniel.spotyinsights.presentation.components.TimeRangeSelector
-import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,18 +54,6 @@ fun TopArtistsScreen(
         }
     }
 
-    LaunchedEffect(pullToRefreshState.isRefreshing) {
-        if (pullToRefreshState.isRefreshing) {
-            viewModel.setEvent(TopArtistsEvent.Refresh)
-        }
-    }
-
-    LaunchedEffect(state.isLoading) {
-        if (!state.isLoading && pullToRefreshState.isRefreshing) {
-            pullToRefreshState.endRefresh()
-        }
-    }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -76,11 +62,13 @@ fun TopArtistsScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        Box(
+        PullToRefreshBox(
+            isRefreshing = state.isLoading,
+            state = pullToRefreshState,
+            onRefresh = { viewModel.setEvent(TopArtistsEvent.Refresh) },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .nestedScroll(pullToRefreshState.nestedScrollConnection)
         ) {
             Column(
                 modifier = Modifier.fillMaxSize()
@@ -105,6 +93,7 @@ fun TopArtistsScreen(
                             }
                         }
                     }
+
                     state.error != null && state.artists.isEmpty() -> {
                         Box(
                             modifier = Modifier.fillMaxSize(),
@@ -116,6 +105,7 @@ fun TopArtistsScreen(
                             )
                         }
                     }
+
                     else -> {
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(2),
@@ -136,11 +126,6 @@ fun TopArtistsScreen(
                     }
                 }
             }
-
-            PullToRefreshContainer(
-                state = pullToRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
         }
     }
 } 

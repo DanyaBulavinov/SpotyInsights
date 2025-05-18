@@ -1,7 +1,7 @@
 plugins {
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-//    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
 }
@@ -44,10 +44,6 @@ android {
 
     buildFeatures {
         compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
 
     packaging {
@@ -117,4 +113,7 @@ dependencies {
 
     // Palette
     implementation("androidx.palette:palette-ktx:1.0.0")
+
+    // Charts
+    implementation(libs.charts.android)
 }

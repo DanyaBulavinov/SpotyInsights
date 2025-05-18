@@ -14,7 +14,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -54,18 +53,6 @@ fun TopTracksScreen(
         }
     }
 
-    LaunchedEffect(pullToRefreshState.isRefreshing) {
-        if (pullToRefreshState.isRefreshing) {
-            viewModel.setEvent(TopTracksEvent.Refresh)
-        }
-    }
-
-    LaunchedEffect(state.isRefreshing) {
-        if (!state.isRefreshing) {
-            pullToRefreshState.endRefresh()
-        }
-    }
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -74,11 +61,13 @@ fun TopTracksScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        Box(
+        PullToRefreshBox(
+            isRefreshing = state.isRefreshing,
+            state = pullToRefreshState,
+            onRefresh = { viewModel.setEvent(TopTracksEvent.Refresh) },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .nestedScroll(pullToRefreshState.nestedScrollConnection)
         ) {
             Column(
                 modifier = Modifier.fillMaxSize()
@@ -134,11 +123,6 @@ fun TopTracksScreen(
                     }
                 }
             }
-
-            PullToRefreshContainer(
-                state = pullToRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
         }
     }
 } 
