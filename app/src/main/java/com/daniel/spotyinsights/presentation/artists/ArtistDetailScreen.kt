@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -65,13 +66,15 @@ import coil.request.SuccessResult
 import com.daniel.spotyinsights.R
 import com.daniel.spotyinsights.domain.model.DetailedArtist
 import com.daniel.spotyinsights.domain.model.Track
+import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ArtistDetailScreen(
     artistId: String,
     onBack: () -> Unit,
-    viewModel: ArtistDetailViewModel = hiltViewModel()
+    viewModel: ArtistDetailViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -188,7 +191,10 @@ fun ArtistDetailScreen(
                         ) {
                             ArtistDetailContent(
                                 artist = state.artist!!,
-                                topTracks = state.topTracks
+                                topTracks = state.topTracks,
+                                onTrackClick = { trackId ->
+                                    navController.navigate("track_detail/$trackId")
+                                }
                             )
                         }
                     }
@@ -202,6 +208,7 @@ fun ArtistDetailScreen(
 private fun ArtistDetailContent(
     artist: DetailedArtist,
     topTracks: List<Track>,
+    onTrackClick: (String) -> Unit,
     topPadding: Dp = 16.dp
 ) {
     val scrollState = rememberScrollState()
@@ -315,7 +322,8 @@ private fun ArtistDetailContent(
                     Column(
                         modifier = Modifier
                             .padding(8.dp)
-                            .width(100.dp),
+                            .width(100.dp)
+                            .clickable { onTrackClick(track.id) },
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         AsyncImage(

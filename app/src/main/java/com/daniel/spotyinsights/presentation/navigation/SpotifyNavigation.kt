@@ -49,6 +49,7 @@ fun SpotifyNavigation(
             ArtistDetailScreen(
                 artistId = artistId,
                 onBack = { navController.popBackStack() },
+                navController = navController,
             )
         }
     }
