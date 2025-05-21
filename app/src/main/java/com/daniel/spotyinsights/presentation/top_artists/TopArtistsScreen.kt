@@ -63,7 +63,7 @@ fun TopArtistsScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         PullToRefreshBox(
-            isRefreshing = state.isLoading,
+            isRefreshing = state.isRefreshing,
             state = pullToRefreshState,
             onRefresh = { viewModel.setEvent(TopArtistsEvent.Refresh) },
             modifier = Modifier

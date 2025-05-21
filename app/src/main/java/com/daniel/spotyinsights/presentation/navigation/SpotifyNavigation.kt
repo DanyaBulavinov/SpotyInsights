@@ -46,7 +46,11 @@ fun SpotifyNavigation(
             arguments = listOf(navArgument("artistId") { type = NavType.StringType })
         ) { backStackEntry ->
             val artistId = backStackEntry.arguments?.getString("artistId") ?: ""
-            ArtistDetailScreen(artistId = artistId, onBack = { navController.popBackStack() })
+            ArtistDetailScreen(
+                artistId = artistId,
+                onBack = { navController.popBackStack() },
+                navController = navController,
+            )
         }
     }
 } 

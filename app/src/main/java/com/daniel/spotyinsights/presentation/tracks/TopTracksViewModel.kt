@@ -53,7 +53,12 @@ class TopTracksViewModel @Inject constructor(
         when (event) {
             is TopTracksEvent.TimeRangeSelected -> {
                 setState { copy(selectedTimeRange = event.timeRange) }
+                // Always load from local DB first for instant UI update
                 loadTracks()
+                // Then trigger a refresh in the background
+                viewModelScope.launch {
+                    refreshTopTracksUseCase(event.timeRange)
+                }
             }
 
             is TopTracksEvent.Refresh -> onRefresh()

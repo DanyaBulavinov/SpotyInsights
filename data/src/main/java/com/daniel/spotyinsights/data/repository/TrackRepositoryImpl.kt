@@ -34,4 +34,33 @@ class TrackRepositoryImpl @Inject constructor(
             explicit = networkTrack.explicit
         )
     }
+
+    override suspend fun getArtistTopTracks(artistId: String): List<Track> {
+        val response = api.getArtistTopTracks(artistId)
+        return response.tracks.map { networkTrack ->
+            Track(
+                id = networkTrack.id,
+                name = networkTrack.name,
+                artists = networkTrack.artists.map {
+                    com.daniel.spotyinsights.domain.model.TrackArtist(
+                        id = it.id,
+                        name = it.name,
+                        spotifyUrl = it.externalUrls["spotify"] ?: ""
+                    )
+                },
+                album = com.daniel.spotyinsights.domain.model.Album(
+                    id = networkTrack.album.id,
+                    name = networkTrack.album.name,
+                    releaseDate = networkTrack.album.releaseDate,
+                    imageUrl = networkTrack.album.images.firstOrNull()?.url ?: "",
+                    spotifyUrl = networkTrack.album.externalUrls["spotify"] ?: ""
+                ),
+                durationMs = networkTrack.durationMs,
+                popularity = networkTrack.popularity,
+                previewUrl = networkTrack.previewUrl,
+                spotifyUrl = networkTrack.externalUrls["spotify"] ?: "",
+                explicit = networkTrack.explicit
+            )
+        }
+    }
 } 

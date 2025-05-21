@@ -307,7 +307,10 @@ private fun TrackDetailContent(track: Track, topPadding: Dp = 16.dp) {
                             .background(Color.Transparent),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        InfoBox(label = "Duration", value = "${track.durationMs / 1000 / 60}:${(track.durationMs / 1000) % 60}", unified = true)
+                        val minutes = track.durationMs / 1000 / 60
+                        val seconds = (track.durationMs / 1000) % 60
+                        val durationText = String.format("%d:%02d", minutes, seconds)
+                        InfoBox(label = "Duration", value = durationText, unified = true)
                         InfoBox(label = "Popularity", value = track.popularity.toString(), unified = true)
                         InfoBox(label = "Explicit", value = if (track.explicit) "Yes" else "No", unified = true)
                     }

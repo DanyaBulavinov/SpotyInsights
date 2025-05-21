@@ -70,3 +70,9 @@ data class SpotifyImage(
     @Json(name = "width")
     val width: Int?
 )
+
+@JsonClass(generateAdapter = true)
+data class SpotifyArtistTopTracksResponse(
+    @Json(name = "tracks")
+    val tracks: List<SpotifyTrack>
+)

@@ -5,6 +5,7 @@ import com.daniel.spotyinsights.data.network.model.artist.SpotifyArtist
 import com.daniel.spotyinsights.data.network.model.artist.SpotifyArtistResponse
 import com.daniel.spotyinsights.data.network.model.recommendations.SpotifyAvailableGenreSeedsResponse
 import com.daniel.spotyinsights.data.network.model.recommendations.SpotifyRecommendationsResponse
+import com.daniel.spotyinsights.data.network.model.track.SpotifyArtistTopTracksResponse
 import com.daniel.spotyinsights.data.network.model.track.SpotifyTrack
 import com.daniel.spotyinsights.data.network.model.track.SpotifyTrackResponse
 import retrofit2.http.GET
@@ -56,4 +57,7 @@ interface SpotifyApiService {
     suspend fun getArtistById(
         @Path("id") id: String
     ): SpotifyArtist
+
+    @GET("artists/{id}/top-tracks")
+    suspend fun getArtistTopTracks(@Path("id") artistId: String): SpotifyArtistTopTracksResponse
 }

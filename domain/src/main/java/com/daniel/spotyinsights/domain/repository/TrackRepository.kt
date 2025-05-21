@@ -4,4 +4,5 @@ import com.daniel.spotyinsights.domain.model.Track
 
 interface TrackRepository {
     suspend fun getTrackById(id: String): Track
+    suspend fun getArtistTopTracks(artistId: String): List<Track>
 } 
