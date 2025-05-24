@@ -110,6 +110,11 @@ dependencies {
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.ui.test)
     debugImplementation(libs.compose.ui.tooling)
+    
+    // Additional test dependencies
+    testImplementation("app.cash.turbine:turbine:1.1.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 
     // Palette
     implementation("androidx.palette:palette-ktx:1.0.0")
